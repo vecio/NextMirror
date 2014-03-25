@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NextMirror</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="/broadway/sylvester.js"></script>
+    <script type="text/javascript" src="/broadway/glUtils.js"></script>
+    <script type="text/javascript" src="/broadway/util.js"></script>
+    <script type="text/javascript" src="/broadway/avc-codec.js"></script>
+    <script type="text/javascript" src="/broadway/avc.js"></script>
+    <script type="text/javascript" src="/broadway/canvas.js"></script>
+  </head>
+  <body>
+    <div id="video"></div>
+    <script type="text/javascript">
+      var NextMirror = function (div) {
+        var avc, webGLCanvas;
+
+        var setupAvc = function () {
+          avc = new Avc();
+          avc.configure({
+            filter: 'original',
+            filterHorLuma: 'optimized',
+            filterVerLumaEdge: 'optimized',
+            getBoundaryStrengthsA: 'optimized'
+          });
+          avc.onPictureDecoded = handleDecodedFrame;
+        };
+
+        var handleNalUnits = function (message) {
+          avc.decode(new Uint8Array(message.data));
+        };
+
+        var handleDecodedFrame = function (buffer, width, height) {
+          requestAnimationFrame(function () {
+            var lumaSize = width * height;
+            var chromaSize = lumaSize >> 2;
+
+            webGLCanvas.YTexture.fill(buffer.subarray(0, lumaSize));
+            webGLCanvas.UTexture.fill(buffer.subarray(lumaSize, lumaSize + chromaSize));
+            webGLCanvas.VTexture.fill(buffer.subarray(lumaSize + chromaSize, lumaSize + 2 * chromaSize));
+            webGLCanvas.drawScene();
+          });
+        };
+
+        var resizeCanvas = function (canvas) {
+          var width = window.innerWidth - 64;
+          canvas.style.width = width + "px";
+          canvas.style.height = width / canvas.width * canvas.height;
+        };
+
+        var setupCanvas = function (div) {
+          var canvas = document.createElement('canvas');
+
+          var width = div.attributes.width ? div.attributes.width.value : 640;
+          var height = div.attributes.height ? div.attributes.height.value : 368;
+
+          canvas.width = width;
+          canvas.height = height;
+          canvas.style.backgroundColor = "#333333";
+          div.appendChild(canvas);
+          resizeCanvas(canvas);
+          window.addEventListener('resize', function() { resizeCanvas(canvas); return false; });
+
+          webGLCanvas = new YUVWebGLCanvas(canvas, new Size(width, height));
+        };
+
+        setupCanvas(div);
+        setupAvc();
+
+        var socket = new WebSocket('ws://' + location.hostname + ':8081/');
+        socket.binaryType = 'arraybuffer';
+        socket.onmessage = handleNalUnits;
+      };
+
+      NextMirror(document.getElementById('video'));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "nextmirror",
+  "description": "Mirror your desktop to browser in pure JavaScript!",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vecio/NextMirror.git"
+  },
+  "main": "server",
+  "dependencies": {
+    "ws": "0.4.31",
+    "express": "3.4.7"
+  },
+  "author": "Cedric Fung <cedric@vec.io>",
+  "license": "BSD"
+}
