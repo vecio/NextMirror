@@ -26,8 +26,8 @@ var app = express();
 app.use(express.static(path.join(__dirname, WEB_ROOT)));
 
 app.post('/', function (req, res) {
-  var width = req.query['width'];
-  var height = req.query['height'];
+  var width = req.query['w'];
+  var height = req.query['h'];
 
   console.log(
     'Stream Connected: ' + req.socket.remoteAddress +

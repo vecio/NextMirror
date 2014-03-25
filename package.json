@@ -1,6 +1,6 @@
 {
-  "name": "nextmirror",
-  "description": "Mirror your desktop to browser in pure JavaScript!",
+  "name": "NextMirror",
+  "description": "Mirror your desktop to browser with pure JavaScript!",
   "version": "0.0.1",
   "repository": {
     "type": "git",

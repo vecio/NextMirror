@@ -1,2 +1,3 @@
 node_modules/
+public/manifest.json
 *.log

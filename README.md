@@ -3,6 +3,8 @@ NextMirror
 
 Mirror your desktop to browser with pure JavaScript!
 
+Required browser features: WebGL and WebSocket.
+
 ```shell
 $ npm install
 $ npm start
